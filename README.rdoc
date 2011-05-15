@@ -1,6 +1,38 @@
-= guard-migrate
+= Guard::Migrate
 
-Description goes here.
+Migrate guard allows you to keep your migrations.
+
+- This should be compatible with 2.x rails, but has only currently been tested on 3.x rails.
+
+= Install
+
+Please be sure to have {Guard}[https://github.com/guard/guard] installed before continue.
+
+Install the gem:
+
+    gem install guard-migrate
+
+Add it to your Gemfile (inside test group):
+
+    gem 'guard-migrate'
+
+Add guard definition to your Guardfile by running this command:
+
+    guard init migrate
+
+== Options
+
+Available options:
+
+* :run_on_start - this will run the migration task when you start, reload or run all. Defaults to false.
+* :test_clone - this will run the with the additional `db:test:clone` to update the test database. Defaults to true.
+* :reset - this will run `rake db:migrate:reset` every time migrate is run. Defaults to true.
+* :rails_env - passing this will add "RAILS_ENV=" together with the environment.
+
+== Todos
+
+* move the customized code to a separate class/module.
+* make the migrate task more surgical instead of just running the reset every time.
 
 == Contributing to guard-migrate
  
@@ -12,6 +44,9 @@ Description goes here.
 * Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
 * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
 
+== Authors
+
+{Geoff Lanotte}[https://github.com/glanotte]
 == Copyright
 
 Copyright (c) 2011 Geoff Lanotte. See LICENSE.txt for
