@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec', '~> 2.6.0'
   s.add_development_dependency 'guard-rspec', '~> 0.3.1'
 
-  s.files = Dir.glob('{lib}/**/*') + %w[LICENSE README.rdoc]
+  s.files = Dir.glob('{lib}/**/*') + %w[LICENSE.txt README.rdoc]
   s.require_path = 'lib'
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
 
