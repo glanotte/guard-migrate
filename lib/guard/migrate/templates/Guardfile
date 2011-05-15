@@ -1,4 +1,4 @@
 guard 'migrate' do
-  watch('db/migrate/*.rb')
+  watch(%r{^db/migrate/.+\.rb})
 end
 

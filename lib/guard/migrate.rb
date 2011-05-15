@@ -68,6 +68,7 @@ module Guard
     end
 
     def rake_string
+      UI.info 'Running Migrations'
       @rake_string = 'rake'
       @rake_string += ' db:migrate'
       @rake_string += ':reset' if self.reset?
