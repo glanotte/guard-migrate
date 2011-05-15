@@ -1,0 +1,4 @@
+guard 'migrate' do
+  watch('db/migrate/*.rb')
+end
+
