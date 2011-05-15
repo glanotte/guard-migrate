@@ -1,0 +1,5 @@
+module Guard
+  module MigrateVersion
+    VERSION = "0.0.1"
+  end
+end
