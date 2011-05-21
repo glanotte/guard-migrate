@@ -1,6 +1,6 @@
 = Guard::Migrate
 
-Migrate guard allows you to keep your migrations.
+Migrate guard allows you to keep you migrations up to date while developing without needing to rerun them every time. I developed it because when I am first working out a project, the schema can change several times and this saves me several downs/ups/resets.
 
 - This should be compatible with 2.x rails, but has only currently been tested on 3.x rails.
 
@@ -24,15 +24,14 @@ Add guard definition to your Guardfile by running this command:
 
 Available options:
 
-* :run_on_start - this will run the migration task when you start, reload or run all. Defaults to false.
+* :run_on_start - this will run the migration task when you start, reload or run all. Defaults to false. If reset is set to true with this, then it will run a reset on the start, reload, run all instead of just a regular migrate
 * :test_clone - this will run the with the additional `db:test:clone` to update the test database. Defaults to true.
-* :reset - this will run `rake db:migrate:reset` every time migrate is run. Defaults to true.
+* :reset - this will run `rake db:migrate:reset` every time migrate is run. Defaults to false.
 * :rails_env - passing this will add "RAILS_ENV=" together with the environment.
 
 == Todos
 
 * move the customized code to a separate class/module.
-* make the migrate task more surgical instead of just running the reset every time.
 
 == Contributing to guard-migrate
  

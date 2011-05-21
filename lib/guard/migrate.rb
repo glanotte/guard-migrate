@@ -6,10 +6,14 @@ module Guard
     def initialize(watchers=[], options={})
       super
       
-      @reset = true unless options[:reset] == false
+      @reset = true if options[:reset] == true
       @test_clone = true unless options[:test_clone] == false
       @run_on_start = true if options[:run_on_start] == true
       @rails_env = options[:rails_env]
+    end
+
+    def bundler?
+      @bundler ||= File.exist?("#{Dir.pwd}/Gemfile")
     end
 
     def run_on_start?
@@ -60,18 +64,25 @@ module Guard
 
     # Called on file(s) modifications
     def run_on_change(paths)
-      self.migrate
+      self.migrate(paths.map{|path| path.scan(%r{^db/migrate/(\d+).+\.rb}).flatten.first})
     end
 
-    def migrate
-      system self.rake_string
+    def migrate(paths = [])
+      return if !self.reset? && paths.empty?
+      system self.rake_string if self.reset?
+      paths.each do |path|
+        UI.info "Running #{self.rake_string(path)}"
+        system self.rake_string(path)
+      end
     end
 
-    def rake_string
-      UI.info 'Running Migrations'
-      @rake_string = 'rake'
+    def rake_string(path = nil)
+      @rake_string = ''
+      @rake_string += 'bundle exec ' if self.bundler?
+      @rake_string += 'rake'
       @rake_string += ' db:migrate'
       @rake_string += ':reset' if self.reset?
+      @rake_string += ":redo VERSION=#{path}" if !self.reset? && path && !path.empty?
       @rake_string += ' db:test:clone' if self.test_clone?
       @rake_string += " RAILS_ENV=#{self.rails_env}" if self.rails_env
       @rake_string

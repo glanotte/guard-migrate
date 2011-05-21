@@ -2,11 +2,27 @@ require 'spec_helper'
 
 describe Guard::Migrate do
   let(:options){ {}}
-  subject{ Guard::Migrate.new([], options) }
+  let(:paths){{}}
+
+  subject{ Guard::Migrate.new(paths, options) }
   
   describe "options" do
+    context "bundler" do
+      context "with a gemfile found" do
+        before{File.stub!(:exist?).and_return(true) }
+        its(:bundler?){should be_true}
+        its(:rake_string){should match(/^bundle exec rake/)}
+
+      end
+      context "with no gemfile found" do
+        before{File.stub!(:exist?).and_return(false)}
+        its(:bundler?){should_not be_true}
+        its(:rake_string){should match(/^rake/)}
+      end
+
+    end
     context "test clone" do
-      context "with no optios passed" do
+      context "with no options passed" do
         its(:test_clone?){should be_true}
         its(:rake_string){should match(/db:test:clone/)}
       end
@@ -21,15 +37,20 @@ describe Guard::Migrate do
 
     context "reset" do
       context "with no options passed" do
-        its(:reset?){should be_true}
-        its(:rake_string){should match(/rake db:migrate:reset/)}
+        its(:reset?){should_not be_true}
+
+        context "with paths" do
+          let(:paths){ ['1234'] }
+          it "rake string should attempt redo of changed migration" do
+            subject.rake_string(paths.first).should match(/rake db:migrate:redo VERSION\=1234/)
+          end
+        end
       end
 
-      context "when passed false" do
-        let(:options){ {:reset => false} }
-        its(:reset?){should_not be_true}
-        its(:rake_string){should match(/rake db:migrate/)}
-        its(:rake_string){should_not match(/rake db:migrate:reset/)}
+      context "when passed true" do
+        let(:options){ {:reset => true} }
+        its(:reset?){should be_true}
+        its(:rake_string){should match(/rake db:migrate:reset/)}
       end
     end
 
@@ -71,6 +92,22 @@ describe Guard::Migrate do
           subject.should_receive(:migrate)
           subject.run_all
         end
+
+        context "with reset set to true" do
+          let(:options){ {:run_on_start => true, :reset => true} }
+          it "should run a migrate reset on start" do
+            subject.rake_string.should match(/db:migrate:reset/)
+          end
+        end
+
+        context "with reset set to false" do
+          let(:options){ {:run_on_start => true, :reset => false} }
+          it "should run a regular migrate on start" do
+            subject.rake_string.should match(/db:migrate/)
+            subject.rake_string.should_not match(/db:migrate:reset/)
+            subject.rake_string.should_not match(/db:migrate:redo/)
+          end
+        end
       end
     end
 
@@ -88,10 +125,12 @@ describe Guard::Migrate do
     end
   end
 
-  context "migrate" do
+  context "run on change should fixup the path to only the version" do
+    ##I don't like this test much - consider refactoring
+    let(:paths){ ['db/migrate/1234_i_like_cheese.rb'] }
     it "should run the rake command" do
-      subject.should_receive(:system).with(subject.rake_string)
-      subject.run_on_change []
+      subject.should_receive(:system).with(subject.rake_string('1234'))
+      subject.run_on_change paths
     end
   end
 end

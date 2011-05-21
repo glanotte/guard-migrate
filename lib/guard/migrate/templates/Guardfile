@@ -1,4 +1,4 @@
 guard 'migrate' do
-  watch(%r{^db/migrate/.+\.rb})
+  watch(%r{^db/migrate/(\d+).+\.rb})
 end
 
