@@ -3,7 +3,7 @@ require 'guard/guard'
 
 module Guard
   class Migrate < Guard
-    attr_reader :seed
+    attr_reader :seed, :rails_env
 
     def initialize(watchers=[], options={})
       super
@@ -29,10 +29,6 @@ module Guard
 
     def reset?
       !!@reset
-    end
-
-    def rails_env
-      @rails_env
     end
 
     # =================
