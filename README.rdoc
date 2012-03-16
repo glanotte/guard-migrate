@@ -1,6 +1,7 @@
-{<img src="https://secure.travis-ci.org/glanotte/guard-migrate.png" />}[http://travis-ci.org/glanotte/guard-migrate]
 
 = Guard::Migrate
+
+{<img src="https://secure.travis-ci.org/glanotte/guard-migrate.png" />}[http://travis-ci.org/glanotte/guard-migrate]
 
 Migrate guard allows you to keep you migrations up to date while developing without needing to rerun them every time. I developed it because when I am first working out a project, the schema can change several times and this saves me several downs/ups/resets.
 
