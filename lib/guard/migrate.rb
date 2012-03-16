@@ -3,6 +3,8 @@ require 'guard/guard'
 
 module Guard
   class Migrate < Guard
+    attr_reader :seed
+
     def initialize(watchers=[], options={})
       super
       
@@ -10,6 +12,7 @@ module Guard
       @test_clone = true unless options[:test_clone] == false
       @run_on_start = true if options[:run_on_start] == true
       @rails_env = options[:rails_env]
+      @seed = options[:seed]
     end
 
     def bundler?
@@ -85,9 +88,9 @@ module Guard
       @rake_string += ":redo VERSION=#{path}" if !self.reset? && path && !path.empty?
       @rake_string += ' db:test:clone' if self.test_clone?
       @rake_string += " RAILS_ENV=#{self.rails_env}" if self.rails_env
+      @rake_string += " db:seed" if @seed
       @rake_string
     end
-
   end
 end
 

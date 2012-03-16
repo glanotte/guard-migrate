@@ -123,6 +123,18 @@ describe Guard::Migrate do
         its(:rake_string){ should match(/RAILS_ENV=development/)}
       end
     end
+
+    context "Seed the database" do
+      context "when no option is passed" do
+        its(:seed){ should be_nil }
+      end
+
+      context "when set to true" do
+        let(:options){ {:seed => true} }
+        its(:seed){ should be_true }
+        its(:rake_string){ should match(/db:seed/)}
+      end
+    end
   end
 
   context "run on change should fixup the path to only the version" do
