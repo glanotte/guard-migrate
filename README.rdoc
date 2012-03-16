@@ -28,6 +28,7 @@ Available options:
 * :test_clone - this will run the with the additional `db:test:clone` to update the test database. Defaults to true.
 * :reset - this will run `rake db:migrate:reset` every time migrate is run. Defaults to false.
 * :rails_env - passing this will add "RAILS_ENV=" together with the environment.
+* :seed - setting this option to true will run seed after migrations. This will also run after test:clone if that is set to run. Defaults to false.
 
 == Todos
 
