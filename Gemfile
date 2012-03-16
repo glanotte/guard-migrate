@@ -5,3 +5,4 @@ gemspec
 
 gem 'rb-fsevent', '>= 0.3.2'
 gem 'growl', '~> 1.0.3'
+gem 'rake'
