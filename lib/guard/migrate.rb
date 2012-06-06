@@ -62,7 +62,7 @@ module Guard
     end
 
     # Called on file(s) modifications
-    def run_on_change(paths)
+    def run_on_changes(paths)
       self.migrate(paths.map{|path| path.scan(%r{^db/migrate/(\d+).+\.rb}).flatten.first})
     end
 
