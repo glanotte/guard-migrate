@@ -142,7 +142,7 @@ describe Guard::Migrate do
     let(:paths){ ['db/migrate/1234_i_like_cheese.rb'] }
     it "should run the rake command" do
       subject.should_receive(:system).with(subject.rake_string('1234'))
-      subject.run_on_change paths
+      subject.run_on_changes paths
     end
   end
 end
