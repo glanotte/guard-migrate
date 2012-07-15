@@ -41,7 +41,7 @@ module Guard
     # Called once when Guard starts
     # Please override initialize method to init stuff
     def start
-      self.migrate if self.run_on_start?
+      migrate if run_on_start?
     end
 
     # Called on Ctrl-C signal (when Guard quits)
@@ -52,39 +52,43 @@ module Guard
     # Called on Ctrl-Z signal
     # This method should be mainly used for "reload" (really!) actions like reloading passenger/spork/bundler/...
     def reload
-      self.migrate if self.run_on_start?
+      migrate if run_on_start?
     end
 
     # Called on Ctrl-/ signal
     # This method should be principally used for long action like running all specs/tests/...
     def run_all
-      self.migrate if self.run_on_start?
+      migrate if run_on_start?
     end
 
     # Called on file(s) modifications
     def run_on_changes(paths)
-      self.migrate(paths.map{|path| path.scan(%r{^db/migrate/(\d+).+\.rb}).flatten.first})
+      migrate(paths.map{|path| path.scan(%r{^db/migrate/(\d+).+\.rb}).flatten.first})
     end
 
     def migrate(paths = [])
-      return if !self.reset? && paths.empty?
-      system self.rake_string if self.reset?
+      return if !reset? && paths.empty?
+      system rake_string if reset?
       paths.each do |path|
-        UI.info "Running #{self.rake_string(path)}"
-        system self.rake_string(path)
+        UI.info "Running #{rake_string(path)}"
+        system rake_string(path)
       end
+    end
+
+    def run_redo?(path)
+      !reset? && path && !path.empty?
     end
 
     def rake_string(path = nil)
       @rake_string = ''
-      @rake_string += 'bundle exec ' if self.bundler?
+      @rake_string += 'bundle exec ' if bundler?
       @rake_string += 'rake'
       @rake_string += ' db:migrate'
-      @rake_string += ':reset' if self.reset?
-      @rake_string += ":redo VERSION=#{path}" if !self.reset? && path && !path.empty?
+      @rake_string += ':reset' if reset?
+      @rake_string += ":redo VERSION=#{path}" if run_redo?(path)
       @rake_string += " db:seed" if @seed
-      @rake_string += ' db:test:clone' if self.test_clone?
-      @rake_string += " RAILS_ENV=#{self.rails_env}" if self.rails_env
+      @rake_string += ' db:test:clone' if test_clone?
+      @rake_string += " RAILS_ENV=#{rails_env}" if rails_env
       @rake_string
     end
   end
