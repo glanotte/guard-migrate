@@ -80,17 +80,46 @@ module Guard
     end
 
     def rake_string(path = nil)
-      @rake_string = ''
-      @rake_string += 'bundle exec ' if bundler?
-      @rake_string += 'rake'
-      @rake_string += ' db:migrate'
-      @rake_string += ':reset' if reset?
-      @rake_string += ":redo VERSION=#{path}" if run_redo?(path)
-      @rake_string += " db:seed" if @seed
-      @rake_string += ' db:test:clone' if test_clone?
-      @rake_string += " RAILS_ENV=#{rails_env}" if rails_env
-      @rake_string
+      rake_string = rake_command
+      rake_string += migrate_string(path)
+      rake_string += seed_string
+      rake_string += clone_string
+      rake_string += rails_env_string
+      rake_string
     end
+
+    private
+
+
+    def rake_command
+      command = ''
+      command += 'bundle exec ' if bundler?
+      command += 'rake'
+      command
+    end
+
+    def rails_env_string
+      return "" unless rails_env
+      " RAILS_ENV=#{rails_env}"
+    end
+
+    def clone_string
+      return '' unless test_clone?
+      ' db:test:clone'
+    end
+
+    def seed_string
+      return '' unless @seed
+      " db:seed"
+    end
+
+    def migrate_string(path)
+      string = ' db:migrate'
+      string += ':reset' if reset?
+      string += ":redo VERSION=#{path}" if run_redo?(path)
+      string
+    end
+
   end
 end
 
