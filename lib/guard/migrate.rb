@@ -82,9 +82,9 @@ module Guard
       @rake_string += ' db:migrate'
       @rake_string += ':reset' if self.reset?
       @rake_string += ":redo VERSION=#{path}" if !self.reset? && path && !path.empty?
+      @rake_string += " db:seed" if @seed
       @rake_string += ' db:test:clone' if self.test_clone?
       @rake_string += " RAILS_ENV=#{self.rails_env}" if self.rails_env
-      @rake_string += " db:seed" if @seed
       @rake_string
     end
   end

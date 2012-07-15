@@ -134,6 +134,13 @@ describe Guard::Migrate do
         its(:seed){ should be_true }
         its(:rake_string){ should match(/db:seed/)}
       end
+
+      context "when seed is set to true and clone is set to true" do
+        let(:options){ {:seed => true, :test_clone => true} }
+        it "runs the seed option before the clone option" do
+          subject.rake_string.should match(/db:seed.*db:test:clone/)
+        end
+      end
     end
   end
 
