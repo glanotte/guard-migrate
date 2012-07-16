@@ -63,7 +63,11 @@ module Guard
 
     # Called on file(s) modifications
     def run_on_changes(paths)
-      migrate(paths.map{|path| path.scan(%r{^db/migrate/(\d+).+\.rb}).flatten.first})
+      if paths.any?{|path| path.match(%r{^db/migrate/(\d+).+\.rb})}
+        migrate(paths.map{|path| path.scan(%r{^db/migrate/(\d+).+\.rb}).flatten.first})
+      elsif paths.any?{|path| path.match(%r{^db/seeds\.rb$})}
+        seed_only
+      end
     end
 
     def migrate(paths = [])
@@ -73,6 +77,11 @@ module Guard
         UI.info "Running #{rake_string(path)}"
         system rake_string(path)
       end
+    end
+
+    def seed_only
+      UI.info "Running #{seed_only_string}"
+      system seed_only_string
     end
 
     def run_redo?(path)
@@ -88,8 +97,14 @@ module Guard
       rake_string
     end
 
-    private
+    def seed_only_string
+      seed_only = rake_command
+      seed_only += seed_string
+      seed_only += clone_string
+      seed_only
+    end
 
+    private
 
     def rake_command
       command = ''
