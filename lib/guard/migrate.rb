@@ -41,7 +41,7 @@ module Guard
     # Called once when Guard starts
     # Please override initialize method to init stuff
     def start
-      self.migrate if self.run_on_start?
+      migrate if run_on_start?
     end
 
     # Called on Ctrl-C signal (when Guard quits)
@@ -52,41 +52,89 @@ module Guard
     # Called on Ctrl-Z signal
     # This method should be mainly used for "reload" (really!) actions like reloading passenger/spork/bundler/...
     def reload
-      self.migrate if self.run_on_start?
+      migrate if run_on_start?
     end
 
     # Called on Ctrl-/ signal
     # This method should be principally used for long action like running all specs/tests/...
     def run_all
-      self.migrate if self.run_on_start?
+      migrate if run_on_start?
     end
 
     # Called on file(s) modifications
     def run_on_changes(paths)
-      self.migrate(paths.map{|path| path.scan(%r{^db/migrate/(\d+).+\.rb}).flatten.first})
-    end
-
-    def migrate(paths = [])
-      return if !self.reset? && paths.empty?
-      system self.rake_string if self.reset?
-      paths.each do |path|
-        UI.info "Running #{self.rake_string(path)}"
-        system self.rake_string(path)
+      if paths.any?{|path| path.match(%r{^db/migrate/(\d+).+\.rb})}
+        migrate(paths.map{|path| path.scan(%r{^db/migrate/(\d+).+\.rb}).flatten.first})
+      elsif paths.any?{|path| path.match(%r{^db/seeds\.rb$})}
+        seed_only
       end
     end
 
-    def rake_string(path = nil)
-      @rake_string = ''
-      @rake_string += 'bundle exec ' if self.bundler?
-      @rake_string += 'rake'
-      @rake_string += ' db:migrate'
-      @rake_string += ':reset' if self.reset?
-      @rake_string += ":redo VERSION=#{path}" if !self.reset? && path && !path.empty?
-      @rake_string += " db:seed" if @seed
-      @rake_string += ' db:test:clone' if self.test_clone?
-      @rake_string += " RAILS_ENV=#{self.rails_env}" if self.rails_env
-      @rake_string
+    def migrate(paths = [])
+      return if !reset? && paths.empty?
+      system rake_string if reset?
+      paths.each do |path|
+        UI.info "Running #{rake_string(path)}"
+        system rake_string(path)
+      end
     end
+
+    def seed_only
+      UI.info "Running #{seed_only_string}"
+      system seed_only_string
+    end
+
+    def run_redo?(path)
+      !reset? && path && !path.empty?
+    end
+
+    def rake_string(path = nil)
+      [
+        rake_command,
+        migrate_string(path),
+        seed_string,
+        clone_string,
+        rails_env_string
+      ].compact.join(" ")
+    end
+
+    def seed_only_string
+      [
+        rake_command,
+        seed_string,
+        clone_string,
+        rails_env_string
+      ].compact.join(" ")
+    end
+
+    private
+
+    def rake_command
+      command = ""
+      command += "bundle exec " if bundler?
+      command += "rake"
+      command
+    end
+
+    def rails_env_string
+      "RAILS_ENV=#{rails_env}" if rails_env
+    end
+
+    def clone_string
+      "db:test:clone" if test_clone?
+    end
+
+    def seed_string
+      "db:seed" if @seed
+    end
+
+    def migrate_string(path)
+      string = "db:migrate"
+      string += ":reset" if reset?
+      string += ":redo VERSION=#{path}" if run_redo?(path)
+      string
+    end
+
   end
 end
 

@@ -142,6 +142,16 @@ describe Guard::Migrate do
         end
       end
     end
+
+    context "when the seeds file is passed as the paths" do
+      let(:paths){ ['db/seeds.rb'] }
+      let(:options){ {:seed => true, :test_clone => true} }
+      its(:seed_only_string){ should match(/db:seed db:test:clone/) }
+      it "runs the rake command with seed only" do
+        subject.should_receive(:system).with(subject.seed_only_string)
+        subject.run_on_changes paths
+      end
+    end
   end
 
   context "run on change should fixup the path to only the version" do

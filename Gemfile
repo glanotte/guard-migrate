@@ -3,7 +3,7 @@ source "http://rubygems.org"
 # Specify your gem's dependencies in guard-migrate.gemspec
 gemspec
 
-gem 'growl', '~> 1.0.3'
+gem 'growl'
 gem 'rake'
 
 platforms :ruby do
