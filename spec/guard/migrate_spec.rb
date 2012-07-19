@@ -162,4 +162,13 @@ describe Guard::Migrate do
       subject.run_on_changes paths
     end
   end
+
+  context "run on change when set to reset should only run migrations one time" do
+    let(:paths){ ['db/migrate/1234_i_like_cheese.rb', 'db/migrate/1235_i_really_like_cheese.rb'] }
+    let(:options){ {:reset => true, :test_clone => true} }
+    it "should run the rake command" do
+      subject.should_receive(:system).with(subject.rake_string('1234'))
+      subject.run_on_changes paths
+    end
+  end
 end

@@ -72,10 +72,11 @@ module Guard
 
     def migrate(paths = [])
       return if !reset? && paths.empty?
-      system rake_string if reset?
-      paths.each do |path|
-        UI.info "Running #{rake_string(path)}"
-        system rake_string(path)
+      if reset?
+        UI.info "Running #{rake_string}"
+        system rake_string
+      else
+        run_all_migrations(paths)
       end
     end
 
@@ -108,6 +109,13 @@ module Guard
     end
 
     private
+
+    def run_all_migrations(paths)
+      paths.each do |path|
+        UI.info "Running #{rake_string(path)}"
+        system rake_string(path)
+      end
+    end
 
     def rake_command
       command = ""
