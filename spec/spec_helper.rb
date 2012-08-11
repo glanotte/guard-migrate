@@ -1,3 +1,8 @@
+if RUBY_VERSION.match(/^1\.9\.\d?$/)
+  require 'simplecov'
+  SimpleCov.start 'rails'
+end
+
 require 'rspec'
 require 'guard/migrate'
 
