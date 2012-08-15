@@ -1,3 +1,12 @@
+if RUBY_VERSION.match(/^1\.9\.\d?$/)
+  begin
+    require 'simplecov'
+    SimpleCov.start 'rails'
+  rescue LoadError
+    # not finding simplecov is no reason to fail!
+  end
+end
+
 require 'rspec'
 require 'guard/migrate'
 
