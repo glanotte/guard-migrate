@@ -13,7 +13,8 @@ end
 group :test do
   gem 'files', '~> 0.2.1'
 
-  platform :ruby_19 do
+  # doh! not all ruby 1.9s have simplecov :(
+  platform :mri_19 do
     gem 'simplecov', '~> 0.6.4', :group => :test, :require => false
   end
 
