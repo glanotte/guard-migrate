@@ -3,11 +3,12 @@ require 'guard/guard'
 
 module Guard
   class Migrate < Guard
+    autoload :Notify, 'guard/migrate/notify'
     attr_reader :seed, :rails_env
 
     def initialize(watchers=[], options={})
       super
-      
+
       @reset = true if options[:reset] == true
       @test_clone = true unless options[:test_clone] == false
       @run_on_start = true if options[:run_on_start] == true
@@ -74,15 +75,21 @@ module Guard
       return if !reset? && paths.empty?
       if reset?
         UI.info "Running #{rake_string}"
-        system rake_string
+        result = system(rake_string)
+        result &&= "reset"
       else
-        run_all_migrations(paths)
+        result = run_all_migrations(paths)
       end
+
+      UI.info "Sending notification"
+      Notify.new(result).notify
     end
 
     def seed_only
       UI.info "Running #{seed_only_string}"
-      system seed_only_string
+      result = system(seed_only_string)
+      result &&= "seed"
+      Notify.new(result).notify
     end
 
     def run_redo?(path)
@@ -111,10 +118,14 @@ module Guard
     private
 
     def run_all_migrations(paths)
+      result = nil
       paths.each do |path|
         UI.info "Running #{rake_string(path)}"
-        system rake_string(path)
+        result = system rake_string(path)
+        break unless result
       end
+
+      result
     end
 
     def rake_command
