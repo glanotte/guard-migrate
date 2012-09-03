@@ -81,7 +81,6 @@ module Guard
         result = run_all_migrations(paths)
       end
 
-      UI.info "Sending notification"
       Notify.new(result).notify
     end
 
