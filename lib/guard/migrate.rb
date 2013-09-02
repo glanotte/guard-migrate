@@ -156,7 +156,8 @@ module Guard
 
     def invalid?(path)
       migration = File.open(path, 'r')
-      !migration.read.match(/def (up|down|change)(\n|\s)+end/).nil?
+      content = migration.read.gsub(/\s+/, '')
+      content.empty? || !content.match(/def(up|down|change)end/).nil?
     rescue Errno::ENOENT
       true
     ensure
