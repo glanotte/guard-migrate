@@ -159,6 +159,8 @@ module Guard
       !migration.read.match(/def (up|down|change)(\n|\s)+end/).nil?
     rescue Errno::ENOENT
       true
+    ensure
+      begin; migration.close; rescue; end      
     end
 
   end
