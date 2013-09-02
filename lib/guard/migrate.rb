@@ -65,6 +65,7 @@ module Guard
     # Called on file(s) modifications
     def run_on_changes(paths)
       if paths.any?{|path| path.match(%r{^db/migrate/(\d+).+\.rb})}
+        paths.delete_if { |path| invalid?(path) }
         migrate(paths.map{|path| path.scan(%r{^db/migrate/(\d+).+\.rb}).flatten.first})
       elsif paths.any?{|path| path.match(%r{^db/seeds\.rb$})}
         seed_only
@@ -151,6 +152,13 @@ module Guard
       string += ":reset" if reset?
       string += ":redo VERSION=#{path}" if run_redo?(path)
       string
+    end
+
+    def invalid?(path)
+      migration = File.open(path, 'r')
+      !migration.read.match(/def (up|down|change)(\n|\s)+end/).nil?
+    rescue Errno::ENOENT
+      true
     end
 
   end
