@@ -1,10 +1,19 @@
 require 'spec_helper'
+require 'tempfile'
 
 describe Guard::Migrate do
   let(:options){ {}}
   let(:paths){{}}
 
   subject{ Guard::Migrate.new(paths, options) }
+
+  before(:all) do
+    FileUtils.mkdir_p('db/migrate')
+  end
+
+  after(:all) do
+    FileUtils.rm_rf('db')
+  end  
   
   describe "options" do
     context "bundler" do
@@ -156,7 +165,7 @@ describe Guard::Migrate do
 
   context "run on change should fixup the path to only the version" do
     ##I don't like this test much - consider refactoring
-    let(:paths){ ['db/migrate/1234_i_like_cheese.rb'] }
+    let(:paths){ [create_valid_up_and_down_migration('1234_i_like_cheese').path] }
     it "should run the rake command" do
       subject.should_receive(:system).with(subject.rake_string('1234'))
       subject.run_on_changes paths
@@ -164,11 +173,43 @@ describe Guard::Migrate do
   end
 
   context "run on change when set to reset should only run migrations one time" do
-    let(:paths){ ['db/migrate/1234_i_like_cheese.rb', 'db/migrate/1235_i_really_like_cheese.rb'] }
+    let(:paths){ [create_valid_up_and_down_migration('1234_i_like_cheese').path, create_valid_change_migration('1235_i_like_cheese').path] }
     let(:options){ {:reset => true, :test_clone => true} }
     it "should run the rake command" do
       subject.should_receive(:system).with(subject.rake_string('1234'))
       subject.run_on_changes paths
     end
   end
+
+  context "valid/invalid migrations" do
+
+    it "should keep valid up/down migrations" do
+      migration = create_valid_up_and_down_migration('1234_i_like_cheese')
+
+      subject.should_receive(:system).with(subject.rake_string('1234'))
+      subject.run_on_changes [migration.path]
+    end
+
+    it "should keep valid change migrations" do
+      migration = create_valid_change_migration('1234_i_like_cheese')
+
+      subject.should_receive(:system).with(subject.rake_string('1234'))
+      subject.run_on_changes [migration.path]
+    end
+
+    it "should remove empty up/down migrations" do
+      migration = create_invalid_up_and_down_migration('1234_i_like_cheese')
+
+      subject.should_not_receive(:system).with(subject.rake_string('1234'))
+      subject.run_on_changes [migration.path]
+    end
+
+    it "should remove empty change migrations" do
+      migration = create_invalid_change_migration('1234_i_like_cheese')
+
+      subject.should_not_receive(:system).with(subject.rake_string('1234'))
+      subject.run_on_changes [migration.path]
+    end    
+  end
+
 end

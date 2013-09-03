@@ -26,4 +26,6 @@ RSpec.configure do |config|
   config.after(:each) do
     ENV["GUARD_ENV"] = nil
   end
+
+  config.include MigrationFactory
 end
