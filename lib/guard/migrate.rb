@@ -4,6 +4,7 @@ require 'guard/guard'
 module Guard
   class Migrate < Guard
     autoload :Notify, 'guard/migrate/notify'
+    autoload :Migration, 'guard/migrate/migration'
     attr_reader :seed, :rails_env
 
     def initialize(watchers=[], options={})
@@ -65,21 +66,21 @@ module Guard
     # Called on file(s) modifications
     def run_on_changes(paths)
       if paths.any?{|path| path.match(%r{^db/migrate/(\d+).+\.rb})}
-        paths.delete_if { |path| invalid?(path) }
-        migrate(paths.map{|path| path.scan(%r{^db/migrate/(\d+).+\.rb}).flatten.first})
+        migrations = paths.map {|path| Migration.new(path)}
+        migrate(migrations)
       elsif paths.any?{|path| path.match(%r{^db/seeds\.rb$})}
         seed_only
       end
     end
 
-    def migrate(paths = [])
-      return if !reset? && paths.empty?
+    def migrate(migrations = [])
+      return if !reset? && migrations.empty?
       if reset?
         UI.info "Running #{rake_string}"
         result = system(rake_string)
         result &&= "reset"
       else
-        result = run_all_migrations(paths)
+        result = run_all_migrations(migrations)
       end
 
       Notify.new(result).notify
@@ -92,14 +93,14 @@ module Guard
       Notify.new(result).notify
     end
 
-    def run_redo?(path)
-      !reset? && path && !path.empty?
+    def run_redo?(version)
+      !reset? && version && !version.empty?
     end
 
-    def rake_string(path = nil)
+    def rake_string(version = nil)
       [
         rake_command,
-        migrate_string(path),
+        migrate_string(version),
         seed_string,
         clone_string,
         rails_env_string
@@ -117,12 +118,16 @@ module Guard
 
     private
 
-    def run_all_migrations(paths)
+    def run_all_migrations(migrations)
       result = nil
-      paths.each do |path|
-        UI.info "Running #{rake_string(path)}"
-        result = system rake_string(path)
-        break unless result
+      migrations.each do |migration|
+        if migration.valid?
+          UI.info "Running #{rake_string(migration.version)}"
+          result = system rake_string(migration.version)
+          break unless result
+        else
+          UI.info "Skip empty migration - #{migration.version}"
+        end
       end
 
       result
@@ -147,21 +152,11 @@ module Guard
       "db:seed" if @seed
     end
 
-    def migrate_string(path)
+    def migrate_string(version)
       string = "db:migrate"
       string += ":reset" if reset?
-      string += ":redo VERSION=#{path}" if run_redo?(path)
+      string += ":redo VERSION=#{version}" if run_redo?(version)
       string
-    end
-
-    def invalid?(path)
-      migration = File.open(path, 'r')
-      content = migration.read.gsub(/\s+/, '')
-      content.empty? || !content.match(/def(up|down|change)end/).nil?
-    rescue Errno::ENOENT
-      true
-    ensure
-      begin; migration.close; rescue; end      
     end
 
   end

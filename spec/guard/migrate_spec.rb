@@ -12,7 +12,7 @@ describe Guard::Migrate do
   end
 
   after(:all) do
-    FileUtils.rm_rf('db/migrate')
+    FileUtils.rm_rf('db')
   end  
   
   describe "options" do
@@ -186,28 +186,28 @@ describe Guard::Migrate do
     it "should keep valid up/down migrations" do
       migration = create_valid_up_and_down_migration('1234_i_like_cheese')
 
-      subject.should_receive(:migrate).with(["1234"])
+      subject.should_receive(:system).with(subject.rake_string('1234'))
       subject.run_on_changes [migration.path]
     end
 
     it "should keep valid change migrations" do
       migration = create_valid_change_migration('1234_i_like_cheese')
 
-      subject.should_receive(:migrate).with(["1234"])
+      subject.should_receive(:system).with(subject.rake_string('1234'))
       subject.run_on_changes [migration.path]
     end
 
     it "should remove empty up/down migrations" do
       migration = create_invalid_up_and_down_migration('1234_i_like_cheese')
 
-      subject.should_receive(:migrate).with([])
+      subject.should_not_receive(:system).with(subject.rake_string('1234'))
       subject.run_on_changes [migration.path]
     end
 
     it "should remove empty change migrations" do
       migration = create_invalid_change_migration('1234_i_like_cheese')
 
-      subject.should_receive(:migrate).with([])
+      subject.should_not_receive(:system).with(subject.rake_string('1234'))
       subject.run_on_changes [migration.path]
     end    
   end
