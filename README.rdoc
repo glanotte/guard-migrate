@@ -52,6 +52,6 @@ Available options:
 {Geoff Lanotte}[https://github.com/glanotte]
 == Copyright
 
-Copyright (c) 2011 Geoff Lanotte. See LICENSE.txt for
+Copyright (c) 2013 Geoff Lanotte. See LICENSE.txt for
 further details.
 
