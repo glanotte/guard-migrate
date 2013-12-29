@@ -10,6 +10,10 @@ platforms :ruby do
   gem 'rb-fsevent', '>= 0.3.2'
 end
 
+platforms :rbx do
+  gem 'rubysl', '~> 2.0'
+end
+
 group :test do
   gem 'files', '~> 0.2.1'
 
