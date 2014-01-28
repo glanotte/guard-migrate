@@ -27,4 +27,5 @@ end
 
 group :development do
   gem 'guard-rspec', '~> 1.2.1'
+  gem 'pry'
 end
