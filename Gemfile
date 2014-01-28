@@ -1,4 +1,4 @@
-source "http://rubygems.org"
+source "https://rubygems.org"
 
 # Specify your gem's dependencies in guard-migrate.gemspec
 gemspec
@@ -15,11 +15,12 @@ platforms :rbx do
 end
 
 group :test do
-  gem 'files', '~> 0.2.1'
+  gem 'rspec', '~> 2.14.1'
+  gem 'files', '~> 0.3.1'
+  gem 'simplecov', '~> 0.8.2', :require => false
+end
 
-  # doh! not all ruby 1.9s have simplecov :(
-  platform :mri_19 do
-    gem 'simplecov', '~> 0.6.4', :group => :test, :require => false
-  end
-
+group :development do
+  gem 'guard-rspec', '~> 4.2.5'
+  gem 'pry'
 end
