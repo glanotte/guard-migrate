@@ -15,17 +15,12 @@ platforms :rbx do
 end
 
 group :test do
-  gem 'rspec', '~> 2.11.0'
-  gem 'files', '~> 0.2.1'
-
-  # doh! not all ruby 1.9s have simplecov :(
-  platform :mri_19 do
-    gem 'simplecov', '~> 0.6.4', :group => :test, :require => false
-  end
-
+  gem 'rspec', '~> 2.14.1'
+  gem 'files', '~> 0.3.1'
+  gem 'simplecov', '~> 0.8.2', :require => false
 end
 
 group :development do
-  gem 'guard-rspec', '~> 1.2.1'
+  gem 'guard-rspec', '~> 4.2.5'
   gem 'pry'
 end

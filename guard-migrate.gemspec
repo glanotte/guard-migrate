@@ -16,8 +16,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = '>= 1.3.6'
   s.rubyforge_project = "guard-migrate"
 
-  s.add_dependency 'guard', '>= 1.3.0'
-  s.add_development_dependency 'bundler', '~> 1.3'
+  s.add_dependency 'guard', '>= 2.3.0'
+  s.add_development_dependency 'bundler', '>= 1.3.5'
 
   s.files = Dir.glob('{lib}/**/*') + %w[LICENSE.txt README.rdoc]
   s.require_path = 'lib'
