@@ -13,8 +13,8 @@ describe Guard::Migrate do
 
   after(:all) do
     FileUtils.rm_rf('db')
-  end  
-  
+  end
+
   describe "options" do
     context "bundler" do
       context "with a gemfile found" do
@@ -28,8 +28,32 @@ describe Guard::Migrate do
         its(:bundler?){should_not be_true}
         its(:rake_string){should match(/^rake/)}
       end
-
     end
+
+    context "custom cmd" do
+      context "with no custom cmd" do
+        its(:cmd?){should_not be_true}
+      end
+
+      context "with custom cmd" do
+        let(:options){ { :cmd => "custom command" } }
+
+        its(:cmd?){should be_true}
+
+        context "when a Gemfile was found" do
+          before{File.stub(:exist?).and_return(true)}
+
+          its(:rake_string){should match(/^bundle exec custom command rake/)}
+        end
+
+        context "when no Gemfile was found" do
+          before{File.stub(:exist?).and_return(false)}
+
+          its(:rake_string){should match(/^custom command rake/)}
+        end
+      end
+    end
+
     context "test clone" do
       context "with no options passed" do
         its(:test_clone?){should be_true}
@@ -209,7 +233,7 @@ describe Guard::Migrate do
 
       subject.should_not_receive(:system).with(subject.rake_string('1234'))
       subject.run_on_changes [migration.path]
-    end    
+    end
   end
 
 end

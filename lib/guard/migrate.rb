@@ -10,6 +10,7 @@ module Guard
     def initialize(watchers=[], options={})
       super
 
+      @cmd = options[:cmd].to_s unless options[:cmd].to_s.empty?
       @reset = true if options[:reset] == true
       @test_clone = true unless options[:test_clone] == false
       @run_on_start = true if options[:run_on_start] == true
@@ -23,6 +24,10 @@ module Guard
 
     def run_on_start?
       !!@run_on_start
+    end
+
+    def cmd?
+      !!@cmd
     end
 
     def test_clone?
@@ -136,6 +141,7 @@ module Guard
     def rake_command
       command = ""
       command += "bundle exec " if bundler?
+      command += "#{@cmd} " if cmd?
       command += "rake"
       command
     end
