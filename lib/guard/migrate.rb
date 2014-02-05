@@ -139,11 +139,19 @@ module Guard
     end
 
     def rake_command
-      command = ""
-      command += "bundle exec " if bundler?
-      command += "#{@cmd} " if cmd?
-      command += "rake"
-      command
+      [
+        bundler_command,
+        custom_command,
+        "rake"
+      ].compact.join(" ")
+    end
+
+    def bundler_command
+      "bundle exec" if bundler?
+    end
+
+    def custom_command
+      "#{@cmd}" if cmd?
     end
 
     def rails_env_string
