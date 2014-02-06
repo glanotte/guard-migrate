@@ -151,7 +151,7 @@ module Guard
     end
 
     def custom_command
-      "#{@cmd}" if cmd?
+      "#{@cmd.strip}" if cmd?
     end
 
     def rails_env_string
@@ -159,7 +159,9 @@ module Guard
     end
 
     def clone_string
-      "db:test:clone" if test_clone?
+      if test_clone? and !custom_command.to_s.match(/db:test:clone/)
+        "db:test:clone"
+      end
     end
 
     def seed_string
@@ -167,10 +169,12 @@ module Guard
     end
 
     def migrate_string(version)
-      string = "db:migrate"
-      string += ":reset" if reset?
-      string += ":redo VERSION=#{version}" if run_redo?(version)
-      string
+      if !custom_command.to_s.match(/db:migrate/)
+        string = "db:migrate"
+        string += ":reset" if reset?
+        string += ":redo VERSION=#{version}" if run_redo?(version)
+        string
+      end
     end
 
   end

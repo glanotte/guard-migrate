@@ -37,10 +37,18 @@ describe Guard::Migrate do
 
       context "with command customization" do
         before{File.stub(:exist?).and_return(false)}
-        let(:options){ { :cmd => "custom command" } }
+        let(:options){ { :cmd => "custom command rake" } }
 
         its(:cmd?){should be_true}
         its(:rake_string){should match(/^custom command rake/)}
+
+        context "without presence of 'rake' keyword" do
+          let(:options){ { :cmd => "custom command" } }
+
+          it "should raise and error" do
+            pending
+          end
+        end
 
         context "with Bundler" do
           before{File.stub(:exist?).and_return(true)}
@@ -48,10 +56,27 @@ describe Guard::Migrate do
           its(:rake_string){should match(/^bundle exec custom command rake/)}
         end
 
-        context "with presence of 'rake' keyword" do
-          let(:options){ { :cmd => "custom command rake" } }
+        context "with custom rake task specified" do
+          context "with duplication of db:migrate" do
+            let(:options){ { :cmd => "custom command rake db:migrate" } }
 
-          its(:rake_string){should_not match(/^custom command rake rake/)}
+            context "rake_string" do
+              it "should contains 'db:migrate' once" do
+                expect(subject.rake_string.scan("db:migrate")).to have(1).items
+              end
+            end
+          end
+
+          context "with duplication of db:test:clone" do
+            let(:options){ { :cmd => "custom command rake db:test:clone" } }
+
+            context "rake_string" do
+              it "should contains 'db:test:clone' once" do
+                expect(subject.rake_string.scan("db:test:clone")).
+                  to have(1).items
+              end
+            end
+          end
         end
       end
     end
