@@ -104,6 +104,8 @@ module Guard
 
     def rake_string(version = nil)
       [
+        bundler_command,
+        custom_command,
         rake_command,
         migrate_string(version),
         seed_string,
@@ -114,6 +116,8 @@ module Guard
 
     def seed_only_string
       [
+        bundler_command,
+        custom_command,
         rake_command,
         seed_string,
         clone_string,
@@ -139,11 +143,7 @@ module Guard
     end
 
     def rake_command
-      [
-        bundler_command,
-        custom_command,
-        "rake"
-      ].compact.join(" ")
+      "rake" unless custom_command.to_s.match(/rake/)
     end
 
     def bundler_command

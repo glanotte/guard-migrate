@@ -30,26 +30,28 @@ describe Guard::Migrate do
       end
     end
 
-    context "custom cmd" do
-      context "with no custom cmd" do
+    context "cmd" do
+      context "without command customization" do
         its(:cmd?){should_not be_true}
       end
 
-      context "with custom cmd" do
+      context "with command customization" do
+        before{File.stub(:exist?).and_return(false)}
         let(:options){ { :cmd => "custom command" } }
 
         its(:cmd?){should be_true}
+        its(:rake_string){should match(/^custom command rake/)}
 
-        context "when a Gemfile was found" do
+        context "with Bundler" do
           before{File.stub(:exist?).and_return(true)}
 
           its(:rake_string){should match(/^bundle exec custom command rake/)}
         end
 
-        context "when no Gemfile was found" do
-          before{File.stub(:exist?).and_return(false)}
+        context "with presence of 'rake' keyword" do
+          let(:options){ { :cmd => "custom command rake" } }
 
-          its(:rake_string){should match(/^custom command rake/)}
+          its(:rake_string){should_not match(/^custom command rake rake/)}
         end
       end
     end
