@@ -62,7 +62,7 @@ describe Guard::Migrate do
 
             context "rake_string" do
               it "should contains 'db:migrate' once" do
-                expect(subject.rake_string.scan("db:migrate")).to have(1).items
+                subject.rake_string.scan("db:migrate").size.should == 1
               end
             end
           end
@@ -72,8 +72,7 @@ describe Guard::Migrate do
 
             context "rake_string" do
               it "should contains 'db:test:clone' once" do
-                expect(subject.rake_string.scan("db:test:clone")).
-                  to have(1).items
+                subject.rake_string.scan("db:test:clone").size.should == 1
               end
             end
           end
