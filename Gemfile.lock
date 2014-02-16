@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    guard-migrate (1.0.0)
+    guard-migrate (1.0.1)
       guard (>= 2.3.0)
 
 GEM
