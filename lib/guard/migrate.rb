@@ -10,6 +10,7 @@ module Guard
     def initialize(watchers=[], options={})
       super
 
+      @cmd = options[:cmd].to_s unless options[:cmd].to_s.empty?
       @reset = true if options[:reset] == true
       @test_clone = true unless options[:test_clone] == false
       @run_on_start = true if options[:run_on_start] == true
@@ -23,6 +24,10 @@ module Guard
 
     def run_on_start?
       !!@run_on_start
+    end
+
+    def cmd?
+      !!@cmd
     end
 
     def test_clone?
@@ -99,6 +104,8 @@ module Guard
 
     def rake_string(version = nil)
       [
+        bundler_command,
+        custom_command,
         rake_command,
         migrate_string(version),
         seed_string,
@@ -109,6 +116,8 @@ module Guard
 
     def seed_only_string
       [
+        bundler_command,
+        custom_command,
         rake_command,
         seed_string,
         clone_string,
@@ -134,10 +143,15 @@ module Guard
     end
 
     def rake_command
-      command = ""
-      command += "bundle exec " if bundler?
-      command += "rake"
-      command
+      "rake" unless custom_command.to_s.match(/rake/)
+    end
+
+    def bundler_command
+      "bundle exec" if bundler?
+    end
+
+    def custom_command
+      "#{@cmd.strip}" if cmd?
     end
 
     def rails_env_string
@@ -145,7 +159,9 @@ module Guard
     end
 
     def clone_string
-      "db:test:clone" if test_clone?
+      if test_clone? and !custom_command.to_s.match(/db:test:clone/)
+        "db:test:clone"
+      end
     end
 
     def seed_string
@@ -153,10 +169,12 @@ module Guard
     end
 
     def migrate_string(version)
-      string = "db:migrate"
-      string += ":reset" if reset?
-      string += ":redo VERSION=#{version}" if run_redo?(version)
-      string
+      if !custom_command.to_s.match(/db:migrate/)
+        string = "db:migrate"
+        string += ":reset" if reset?
+        string += ":redo VERSION=#{version}" if run_redo?(version)
+        string
+      end
     end
 
   end

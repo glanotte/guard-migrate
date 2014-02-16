@@ -13,8 +13,8 @@ describe Guard::Migrate do
 
   after(:all) do
     FileUtils.rm_rf('db')
-  end  
-  
+  end
+
   describe "options" do
     context "bundler" do
       context "with a gemfile found" do
@@ -28,8 +28,58 @@ describe Guard::Migrate do
         its(:bundler?){should_not be_true}
         its(:rake_string){should match(/^rake/)}
       end
-
     end
+
+    context "cmd" do
+      context "without command customization" do
+        its(:cmd?){should_not be_true}
+      end
+
+      context "with command customization" do
+        before{File.stub(:exist?).and_return(false)}
+        let(:options){ { :cmd => "custom command rake" } }
+
+        its(:cmd?){should be_true}
+        its(:rake_string){should match(/^custom command rake/)}
+
+        context "without presence of 'rake' keyword" do
+          let(:options){ { :cmd => "custom command" } }
+
+          it "should raise and error" do
+            pending
+          end
+        end
+
+        context "with Bundler" do
+          before{File.stub(:exist?).and_return(true)}
+
+          its(:rake_string){should match(/^bundle exec custom command rake/)}
+        end
+
+        context "with custom rake task specified" do
+          context "with duplication of db:migrate" do
+            let(:options){ { :cmd => "custom command rake db:migrate" } }
+
+            context "rake_string" do
+              it "should contains 'db:migrate' once" do
+                subject.rake_string.scan("db:migrate").size.should == 1
+              end
+            end
+          end
+
+          context "with duplication of db:test:clone" do
+            let(:options){ { :cmd => "custom command rake db:test:clone" } }
+
+            context "rake_string" do
+              it "should contains 'db:test:clone' once" do
+                subject.rake_string.scan("db:test:clone").size.should == 1
+              end
+            end
+          end
+        end
+      end
+    end
+
     context "test clone" do
       context "with no options passed" do
         its(:test_clone?){should be_true}
@@ -209,7 +259,7 @@ describe Guard::Migrate do
 
       subject.should_not_receive(:system).with(subject.rake_string('1234'))
       subject.run_on_changes [migration.path]
-    end    
+    end
   end
 
 end
