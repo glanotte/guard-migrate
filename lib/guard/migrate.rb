@@ -70,7 +70,7 @@ module Guard
 
     # Called on file(s) modifications
     def run_on_changes(paths)
-      if paths.any?{|path| path.match(%r{^db/migrate/(\d+).+\.rb})}
+      if paths.any?{|path| path.match(%r{^db/migrate/(\d+).+\.rb})} || reset?
         migrations = paths.map {|path| Migration.new(path)}
         migrate(migrations)
       elsif paths.any?{|path| path.match(%r{^db/seeds\.rb$})}

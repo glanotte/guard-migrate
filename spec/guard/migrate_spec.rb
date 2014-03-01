@@ -206,9 +206,17 @@ describe Guard::Migrate do
       let(:paths){ ['db/seeds.rb'] }
       let(:options){ {:seed => true, :test_clone => true} }
       its(:seed_only_string){ should match(/db:seed db:test:clone/) }
+
       it "runs the rake command with seed only" do
         subject.should_receive(:system).with(subject.seed_only_string)
         subject.run_on_changes paths
+      end
+
+      context "When reset is set to true" do
+        let(:options){ {:seed => true, :reset => true} }
+
+        its(:rake_string){ should match(/db:seed/)}
+        its(:rake_string){ should match(/db:migrate:reset/)}
       end
     end
   end
