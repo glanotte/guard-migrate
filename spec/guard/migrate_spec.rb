@@ -22,6 +22,12 @@ describe Guard::Migrate do
         its(:bundler?){should be_true}
         its(:rake_string){should match(/^bundle exec rake/)}
 
+        context "with bunder set to false" do
+          let(:options){ { :bundler => false }}
+
+          its(:bundler?){should be_false}
+          its(:rake_string){should match(/^rake/)}
+        end
       end
       context "with no gemfile found" do
         before{File.stub!(:exist?).and_return(false)}

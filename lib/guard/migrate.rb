@@ -10,6 +10,7 @@ module Guard
     def initialize(watchers=[], options={})
       super
 
+      @bundler = true unless options[:bundler] == false
       @cmd = options[:cmd].to_s unless options[:cmd].to_s.empty?
       @reset = true if options[:reset] == true
       @test_clone = true unless options[:test_clone] == false
@@ -19,7 +20,7 @@ module Guard
     end
 
     def bundler?
-      @bundler ||= File.exist?("#{Dir.pwd}/Gemfile")
+      !!@bundler && File.exist?("#{Dir.pwd}/Gemfile")
     end
 
     def run_on_start?
