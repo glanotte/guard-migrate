@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project = "guard-migrate"
 
   s.add_dependency 'guard', '>= 2.3.0'
+  s.add_dependency 'activerecord', '>= 4.1.0'
   s.add_development_dependency 'bundler', '>= 1.3.5'
 
   s.files = Dir.glob('{lib}/**/*') + %w[LICENSE.txt README.rdoc]
