@@ -88,15 +88,23 @@ describe Guard::Migrate do
 
     context "test clone" do
       context "with no options passed" do
-        its(:test_clone?){should be_true}
-        its(:rake_string){should match(/db:test:clone/)}
+        its(:test_clone?){should be_false}
+        its(:rake_string){should match(/rake db:migrate/)}
+        its(:rake_string){should_not match(/db:test:clone/)}
       end
 
       context "when passed false" do
         let(:options){ {:test_clone => false} }
-        its(:test_clone?){should_not be_true}
+        its(:test_clone?){should be_false}
         its(:rake_string){should match(/rake db:migrate/)}
         its(:rake_string){should_not match(/db:test:clone/)}
+      end
+
+      context "when passed true" do
+        let(:options){ {:test_clone => true} }
+        its(:test_clone?){should be_true}
+        its(:rake_string){should match(/rake db:migrate/)}
+        its(:rake_string){should match(/db:test:clone/)}
       end
     end
 
