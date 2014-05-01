@@ -13,7 +13,7 @@ module Guard
       @bundler = true unless options[:bundler] == false
       @cmd = options[:cmd].to_s unless options[:cmd].to_s.empty?
       @reset = true if options[:reset] == true
-      @test_clone = true unless options[:test_clone] == false
+      @test_clone = options[:test_clone]
       @run_on_start = true if options[:run_on_start] == true
       @rails_env = options[:rails_env]
       @seed = options[:seed]

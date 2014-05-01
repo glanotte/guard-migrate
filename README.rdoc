@@ -31,7 +31,7 @@ Available options:
 * :cmd - this will specify a custom command to run, you can use it to speed up migrations if you use `zeus`, `spring` or simillar in your project. Defaults to `rake`
 * :bundler - this will prefix the command with `bundle exec` if a Gemfile is present. Defaults to `true`
 * :run_on_start - this will run the migration task when you start, reload or run all. Defaults to false. If reset is set to true with this, then it will run a reset on the start, reload, run all instead of just a regular migrate
-* :test_clone - this will run the with the additional `db:test:clone` to update the test database. Defaults to true.
+* :test_clone - this will run the with the additional `db:test:clone` to update the test database. Defaults to false.
 * :reset - this will run `rake db:migrate:reset` every time migrate is run. Defaults to false.
 * :rails_env - passing this will add "RAILS_ENV=" together with the environment.
 * :seed - setting this option to true will run seed after migrations. This will also run after test:clone if that is set to run. Defaults to false.
