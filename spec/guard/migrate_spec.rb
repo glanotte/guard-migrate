@@ -18,7 +18,7 @@ describe Guard::Migrate do
   describe "options" do
     context "bundler" do
       context "with a gemfile found" do
-        before{File.stub!(:exist?).and_return(true) }
+        before{File.stub(:exist?).and_return(true) }
         its(:bundler?){should be_true}
         its(:rake_string){should match(/^bundle exec rake/)}
 
@@ -30,7 +30,7 @@ describe Guard::Migrate do
         end
       end
       context "with no gemfile found" do
-        before{File.stub!(:exist?).and_return(false)}
+        before{File.stub(:exist?).and_return(false)}
         its(:bundler?){should_not be_true}
         its(:rake_string){should match(/^rake/)}
       end
