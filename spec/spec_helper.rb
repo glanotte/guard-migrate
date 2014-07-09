@@ -1,4 +1,4 @@
-if RUBY_VERSION.match(/^1\.9\.\d?$/)
+if RUBY_VERSION.to_f == 1.9
   begin
     require 'simplecov'
     SimpleCov.start 'rails'
