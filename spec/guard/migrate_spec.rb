@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'tempfile'
 
 describe Guard::Migrate do
-  let(:options){ {}}
+  let(:options){ {watchers: paths}}
   let(:paths){{}}
 
-  subject{ Guard::Migrate.new(paths, options) }
+  subject{ Guard::Migrate.new(options) }
 
   before(:all) do
     FileUtils.mkdir_p('db/migrate')

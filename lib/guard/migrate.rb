@@ -1,13 +1,12 @@
-require 'guard'
-require 'guard/guard'
+require 'guard/plugin'
 
 module Guard
-  class Migrate < Guard
+  class Migrate < Plugin
     autoload :Notify, 'guard/migrate/notify'
     autoload :Migration, 'guard/migrate/migration'
     attr_reader :seed, :rails_env
 
-    def initialize(watchers=[], options={})
+    def initialize(options={})
       super
 
       @bundler = true unless options[:bundler] == false
