@@ -223,7 +223,7 @@ describe Guard::Migrate do
 
       it "runs the rake command with seed only" do
         subject.should_receive(:system).with(subject.seed_only_string)
-        subject.run_on_modifications paths
+        subject.run_on_changes paths
       end
 
       context "When reset is set to true" do
@@ -240,7 +240,7 @@ describe Guard::Migrate do
     let(:paths){ [create_valid_up_and_down_migration('1234_i_like_cheese').path] }
     it "should run the rake command" do
       subject.should_receive(:system).with(subject.rake_string('1234'))
-      subject.run_on_modifications paths
+      subject.run_on_changes paths
     end
   end
 
@@ -249,7 +249,7 @@ describe Guard::Migrate do
     let(:options){ {:reset => true, :test_clone => true} }
     it "should run the rake command" do
       subject.should_receive(:system).with(subject.rake_string('1234'))
-      subject.run_on_modifications paths
+      subject.run_on_changes paths
     end
   end
 
@@ -259,28 +259,28 @@ describe Guard::Migrate do
       migration = create_valid_up_and_down_migration('1234_i_like_cheese')
 
       subject.should_receive(:system).with(subject.rake_string('1234'))
-      subject.run_on_modifications [migration.path]
+      subject.run_on_changes [migration.path]
     end
 
     it "should keep valid change migrations" do
       migration = create_valid_change_migration('1234_i_like_cheese')
 
       subject.should_receive(:system).with(subject.rake_string('1234'))
-      subject.run_on_modifications [migration.path]
+      subject.run_on_changes [migration.path]
     end
 
     it "should remove empty up/down migrations" do
       migration = create_invalid_up_and_down_migration('1234_i_like_cheese')
 
       subject.should_not_receive(:system).with(subject.rake_string('1234'))
-      subject.run_on_modifications [migration.path]
+      subject.run_on_changes [migration.path]
     end
 
     it "should remove empty change migrations" do
       migration = create_invalid_change_migration('1234_i_like_cheese')
 
       subject.should_not_receive(:system).with(subject.rake_string('1234'))
-      subject.run_on_modifications [migration.path]
+      subject.run_on_changes [migration.path]
     end
   end
 
