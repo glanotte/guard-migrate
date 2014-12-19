@@ -1,7 +1,10 @@
-require 'spec_helper'
 require 'tempfile'
 
-describe Guard::Migrate do
+# TODO: replace with guard/compat
+require 'guard'
+
+require "guard/migrate"
+RSpec.describe Guard::Migrate do
   let(:options){ {watchers: paths}}
   let(:paths){{}}
 
