@@ -10,4 +10,9 @@ end
 
 task :default => :spec
 
+if ENV['CI'] != 'true'
+  require "rubocop/rake_task"
+  default_tasks << RuboCop::RakeTask.new(:rubocop)
+end
+
 task default: default_tasks.map(&:name)

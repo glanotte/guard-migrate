@@ -23,4 +23,5 @@ end
 group :development do
   gem 'guard-rspec', '~> 4.2.5'
   gem 'pry'
+  gem 'rubocop'
 end
