@@ -89,6 +89,7 @@ RSpec.describe Guard::Migrate do
 
           it 'should raise and error' do
             pending
+            fail 'pending'
           end
         end
 
