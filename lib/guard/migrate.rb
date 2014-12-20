@@ -1,4 +1,4 @@
-require 'guard/plugin'
+require 'guard/compat/plugin'
 
 module Guard
   class Migrate < Plugin
@@ -81,7 +81,7 @@ module Guard
     def migrate(migrations = [])
       return if !reset? && migrations.empty?
       if reset?
-        UI.info "Running #{rake_string}"
+        Compat::UI.info "Running #{rake_string}"
         result = system(rake_string)
         result &&= 'reset'
       else
@@ -92,7 +92,7 @@ module Guard
     end
 
     def seed_only
-      UI.info "Running #{seed_only_string}"
+      Compat::UI.info "Running #{seed_only_string}"
       result = system(seed_only_string)
       result &&= 'seed'
       Notify.new(result).notify
@@ -131,11 +131,11 @@ module Guard
       result = nil
       migrations.each do |migration|
         if migration.valid?
-          UI.info "Running #{rake_string(migration.version)}"
+          Compat::UI.info "Running #{rake_string(migration.version)}"
           result = system rake_string(migration.version)
           break unless result
         else
-          UI.info "Skip empty migration - #{migration.version}"
+          Compat::UI.info "Skip empty migration - #{migration.version}"
         end
       end
 

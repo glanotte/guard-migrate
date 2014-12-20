@@ -1,9 +1,9 @@
 require 'tempfile'
 
-# TODO: replace with guard/compat
-require 'guard'
+require 'guard/compat/test/helper'
 
 require 'guard/migrate'
+
 RSpec.describe Guard::Migrate do
   let(:options) { { watchers: paths } }
   let(:paths) { {} }
@@ -340,6 +340,8 @@ RSpec.describe Guard::Migrate do
       end
 
       it 'runs the rake command with seed only' do
+        allow(Guard::Compat::UI).to receive(:info)
+        allow(Guard::Compat::UI).to receive(:notify)
         expect(subject).to receive(:system).with(subject.seed_only_string)
         subject.run_on_changes paths
       end
@@ -364,6 +366,8 @@ RSpec.describe Guard::Migrate do
     # #I don't like this test much - consider refactoring
     let(:paths) { [create_valid_up_and_down_migration('1234_i_like_cheese').path] }
     it 'should run the rake command' do
+      allow(Guard::Compat::UI).to receive(:info)
+      allow(Guard::Compat::UI).to receive(:notify)
       expect(subject).to receive(:system).with(subject.rake_string('1234'))
       subject.run_on_changes paths
     end
@@ -374,15 +378,18 @@ RSpec.describe Guard::Migrate do
     let(:options) { { reset: true, test_clone: true } }
     it 'should run the rake command' do
       expect(subject).to receive(:system).with(subject.rake_string('1234'))
+      allow(Guard::Compat::UI).to receive(:info)
+      allow(Guard::Compat::UI).to receive(:notify)
       subject.run_on_changes paths
     end
   end
 
   context 'valid/invalid migrations' do
-
     it 'should keep valid up/down migrations' do
       migration = create_valid_up_and_down_migration('1234_i_like_cheese')
 
+      allow(Guard::Compat::UI).to receive(:info)
+      allow(Guard::Compat::UI).to receive(:notify)
       expect(subject).to receive(:system).with(subject.rake_string('1234'))
       subject.run_on_changes [migration.path]
     end
@@ -390,6 +397,8 @@ RSpec.describe Guard::Migrate do
     it 'should keep valid change migrations' do
       migration = create_valid_change_migration('1234_i_like_cheese')
 
+      allow(Guard::Compat::UI).to receive(:info)
+      allow(Guard::Compat::UI).to receive(:notify)
       expect(subject).to receive(:system).with(subject.rake_string('1234'))
       subject.run_on_changes [migration.path]
     end
@@ -397,6 +406,8 @@ RSpec.describe Guard::Migrate do
     it 'should remove empty up/down migrations' do
       migration = create_invalid_up_and_down_migration('1234_i_like_cheese')
 
+      allow(Guard::Compat::UI).to receive(:info)
+      allow(Guard::Compat::UI).to receive(:notify)
       expect(subject).not_to receive(:system).with(subject.rake_string('1234'))
       subject.run_on_changes [migration.path]
     end
@@ -404,9 +415,10 @@ RSpec.describe Guard::Migrate do
     it 'should remove empty change migrations' do
       migration = create_invalid_change_migration('1234_i_like_cheese')
 
+      allow(Guard::Compat::UI).to receive(:info)
+      allow(Guard::Compat::UI).to receive(:notify)
       expect(subject).not_to receive(:system).with(subject.rake_string('1234'))
       subject.run_on_changes [migration.path]
     end
   end
-
 end

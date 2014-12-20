@@ -6,7 +6,7 @@ module Guard
       end
 
       def notify
-        ::Guard::Notifier.notify(
+        Guard::Compat::UI.notify(
           message,
           title: 'Database Migrations',
           image: image
