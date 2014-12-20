@@ -25,12 +25,12 @@ RSpec.describe Guard::Migrate do
 
         describe '#bundler?' do
           subject { super().bundler? }
-          it { should be_true }
+          it { is_expected.to be_truthy }
         end
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should match(/^bundle exec rake/) }
+          it { is_expected.to match(/^bundle exec rake/) }
         end
 
         context 'with bunder set to false' do
@@ -38,12 +38,12 @@ RSpec.describe Guard::Migrate do
 
           describe '#bundler?' do
             subject { super().bundler? }
-            it { should be_false }
+            it { is_expected.to be_falsey }
           end
 
           describe '#rake_string' do
             subject { super().rake_string }
-            it { should match(/^rake/) }
+            it { is_expected.to match(/^rake/) }
           end
         end
       end
@@ -52,12 +52,12 @@ RSpec.describe Guard::Migrate do
 
         describe '#bundler?' do
           subject { super().bundler? }
-          it { should_not be_true }
+          it { is_expected.not_to be_truthy }
         end
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should match(/^rake/) }
+          it { is_expected.to match(/^rake/) }
         end
       end
     end
@@ -66,7 +66,7 @@ RSpec.describe Guard::Migrate do
       context 'without command customization' do
         describe '#cmd?' do
           subject { super().cmd? }
-          it { should_not be_true }
+          it { is_expected.not_to be_truthy }
         end
       end
 
@@ -76,12 +76,12 @@ RSpec.describe Guard::Migrate do
 
         describe '#cmd?' do
           subject { super().cmd? }
-          it { should be_true }
+          it { is_expected.to be_truthy }
         end
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should match(/^custom command rake/) }
+          it { is_expected.to match(/^custom command rake/) }
         end
 
         context "without presence of 'rake' keyword" do
@@ -97,7 +97,7 @@ RSpec.describe Guard::Migrate do
 
           describe '#rake_string' do
             subject { super().rake_string }
-            it { should match(/^bundle exec custom command rake/) }
+            it { is_expected.to match(/^bundle exec custom command rake/) }
           end
         end
 
@@ -129,17 +129,17 @@ RSpec.describe Guard::Migrate do
       context 'with no options passed' do
         describe '#test_clone?' do
           subject { super().test_clone? }
-          it { should be_false }
+          it { is_expected.to be_falsey }
         end
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should match(/rake db:migrate/) }
+          it { is_expected.to match(/rake db:migrate/) }
         end
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should_not match(/db:test:clone/) }
+          it { is_expected.not_to match(/db:test:clone/) }
         end
       end
 
@@ -148,17 +148,17 @@ RSpec.describe Guard::Migrate do
 
         describe '#test_clone?' do
           subject { super().test_clone? }
-          it { should be_false }
+          it { is_expected.to be_falsey }
         end
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should match(/rake db:migrate/) }
+          it { is_expected.to match(/rake db:migrate/) }
         end
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should_not match(/db:test:clone/) }
+          it { is_expected.not_to match(/db:test:clone/) }
         end
       end
 
@@ -167,17 +167,17 @@ RSpec.describe Guard::Migrate do
 
         describe '#test_clone?' do
           subject { super().test_clone? }
-          it { should be_true }
+          it { is_expected.to be_truthy }
         end
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should match(/rake db:migrate/) }
+          it { is_expected.to match(/rake db:migrate/) }
         end
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should match(/db:test:clone/) }
+          it { is_expected.to match(/db:test:clone/) }
         end
       end
     end
@@ -186,7 +186,7 @@ RSpec.describe Guard::Migrate do
       context 'with no options passed' do
         describe '#reset?' do
           subject { super().reset? }
-          it { should_not be_true }
+          it { is_expected.not_to be_truthy }
         end
 
         context 'with paths' do
@@ -202,12 +202,12 @@ RSpec.describe Guard::Migrate do
 
         describe '#reset?' do
           subject { super().reset? }
-          it { should be_true }
+          it { is_expected.to be_truthy }
         end
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should match(/rake db:migrate:reset/) }
+          it { is_expected.to match(/rake db:migrate:reset/) }
         end
       end
     end
@@ -216,7 +216,7 @@ RSpec.describe Guard::Migrate do
       context 'with no options set' do
         describe '#run_on_start?' do
           subject { super().run_on_start? }
-          it { should_not be_true }
+          it { is_expected.not_to be_truthy }
         end
 
         it 'should not run on start' do
@@ -240,7 +240,7 @@ RSpec.describe Guard::Migrate do
 
         describe '#run_on_start?' do
           subject { super().run_on_start? }
-          it { should be_true }
+          it { is_expected.to be_truthy }
         end
 
         it 'should run migrate on the start' do
@@ -280,7 +280,7 @@ RSpec.describe Guard::Migrate do
       context 'when no option is passed' do
         describe '#rails_env' do
           subject { super().rails_env }
-          it { should be_nil }
+          it { is_expected.to be_nil }
         end
       end
 
@@ -289,12 +289,12 @@ RSpec.describe Guard::Migrate do
 
         describe '#rails_env' do
           subject { super().rails_env }
-          it { should == 'development' }
+          it { is_expected.to eq('development') }
         end
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should match(/RAILS_ENV=development/) }
+          it { is_expected.to match(/RAILS_ENV=development/) }
         end
       end
     end
@@ -303,7 +303,7 @@ RSpec.describe Guard::Migrate do
       context 'when no option is passed' do
         describe '#seed' do
           subject { super().seed }
-          it { should be_nil }
+          it { is_expected.to be_nil }
         end
       end
 
@@ -312,12 +312,12 @@ RSpec.describe Guard::Migrate do
 
         describe '#seed' do
           subject { super().seed }
-          it { should be_true }
+          it { is_expected.to be_truthy }
         end
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should match(/db:seed/) }
+          it { is_expected.to match(/db:seed/) }
         end
       end
 
@@ -335,7 +335,7 @@ RSpec.describe Guard::Migrate do
 
       describe '#seed_only_string' do
         subject { super().seed_only_string }
-        it { should match(/db:seed db:test:clone/) }
+        it { is_expected.to match(/db:seed db:test:clone/) }
       end
 
       it 'runs the rake command with seed only' do
@@ -348,12 +348,12 @@ RSpec.describe Guard::Migrate do
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should match(/db:seed/) }
+          it { is_expected.to match(/db:seed/) }
         end
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { should match(/db:migrate:reset/) }
+          it { is_expected.to match(/db:migrate:reset/) }
         end
       end
     end
