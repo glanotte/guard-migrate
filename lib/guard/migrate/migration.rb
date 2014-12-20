@@ -1,7 +1,6 @@
 module Guard
   class Migrate
     class Migration
-
       attr_accessor :path
 
       def initialize(_path)
@@ -19,9 +18,8 @@ module Guard
       rescue Errno::ENOENT
         false
       ensure
-        begin; file.close; rescue; end      
-      end  
-
+        begin; file.close; rescue; end
+      end
     end
   end
 end

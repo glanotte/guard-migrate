@@ -8,10 +8,10 @@ default_tasks << RSpec::Core::RakeTask.new(:spec) do |t|
   t.verbose = (ENV['CI'] == 'true')
 end
 
-task :default => :spec
+task default: :spec
 
 if ENV['CI'] != 'true'
-  require "rubocop/rake_task"
+  require 'rubocop/rake_task'
   default_tasks << RuboCop::RakeTask.new(:rubocop)
 end
 

@@ -6,7 +6,7 @@ module Guard
     autoload :Migration, 'guard/migrate/migration'
     attr_reader :seed, :rails_env
 
-    def initialize(options={})
+    def initialize(options = {})
       super
 
       @bundler = true unless options[:bundler] == false
@@ -70,10 +70,10 @@ module Guard
 
     # Called on file(s) modifications
     def run_on_changes(paths)
-      if paths.any?{|path| path.match(%r{^db/migrate/(\d+).+\.rb})} || reset?
-        migrations = paths.map {|path| Migration.new(path)}
+      if paths.any? { |path| path.match(%r{^db/migrate/(\d+).+\.rb}) } || reset?
+        migrations = paths.map { |path| Migration.new(path) }
         migrate(migrations)
-      elsif paths.any?{|path| path.match(%r{^db/seeds\.rb$})}
+      elsif paths.any? { |path| path.match(%r{^db/seeds\.rb$}) }
         seed_only
       end
     end
@@ -83,7 +83,7 @@ module Guard
       if reset?
         UI.info "Running #{rake_string}"
         result = system(rake_string)
-        result &&= "reset"
+        result &&= 'reset'
       else
         result = run_all_migrations(migrations)
       end
@@ -94,7 +94,7 @@ module Guard
     def seed_only
       UI.info "Running #{seed_only_string}"
       result = system(seed_only_string)
-      result &&= "seed"
+      result &&= 'seed'
       Notify.new(result).notify
     end
 
@@ -111,7 +111,7 @@ module Guard
         seed_string,
         clone_string,
         rails_env_string
-      ].compact.join(" ")
+      ].compact.join(' ')
     end
 
     def seed_only_string
@@ -122,7 +122,7 @@ module Guard
         seed_string,
         clone_string,
         rails_env_string
-      ].compact.join(" ")
+      ].compact.join(' ')
     end
 
     private
@@ -143,11 +143,11 @@ module Guard
     end
 
     def rake_command
-      "rake" unless custom_command.to_s.match(/rake/)
+      'rake' unless custom_command.to_s.match(/rake/)
     end
 
     def bundler_command
-      "bundle exec" if bundler?
+      'bundle exec' if bundler?
     end
 
     def custom_command
@@ -159,24 +159,21 @@ module Guard
     end
 
     def clone_string
-      if test_clone? and !custom_command.to_s.match(/db:test:clone/)
-        "db:test:clone"
-      end
+      return if !test_clone? || custom_command.to_s.match(/db:test:clone/)
+      'db:test:clone'
     end
 
     def seed_string
-      "db:seed" if @seed
+      'db:seed' if @seed
     end
 
     def migrate_string(version)
-      if !custom_command.to_s.match(/db:migrate/)
-        string = "db:migrate"
-        string += ":reset" if reset?
-        string += ":redo VERSION=#{version}" if run_redo?(version)
-        string
-      end
-    end
+      return if custom_command.to_s.match(/db:migrate/)
 
+      string = 'db:migrate'
+      string += ':reset' if reset?
+      string += ":redo VERSION=#{version}" if run_redo?(version)
+      string
+    end
   end
 end
-
