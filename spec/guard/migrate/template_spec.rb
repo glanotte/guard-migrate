@@ -1,11 +1,14 @@
-RSpec.describe 'templates' do
-  describe 'sample guardfile' do
-    it 'is a sample Guardfile' do
-    end
-  end
+require 'guard/compat/test/template'
 
-  describe 'Guard::Migrate guardfile template' do
-    it 'successfully initializes a Guard::Migrate guard' do
+require 'guard/migrate'
+
+RSpec.describe Guard::Migrate do
+  describe 'template' do
+    subject { Guard::Compat::Test::Template.new(described_class) }
+
+    it 'works' do
+      expect(subject.changed('db/seeds.rb')).to eq(%w(db/seeds.rb))
+      expect(subject.changed('db/migrate/12345_add_some_field.rb')).to eq(%w(db/migrate/12345_add_some_field.rb))
     end
   end
 end
