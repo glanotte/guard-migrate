@@ -6,10 +6,10 @@ module Guard
       end
 
       def notify
-        ::Guard::Notifier.notify(
+        Guard::Compat::UI.notify(
           message,
-          :title => "Database Migrations",
-          :image => image
+          title: 'Database Migrations',
+          image: image
         )
       end
 
@@ -17,10 +17,10 @@ module Guard
 
       def message
         case @result
-          when "reset" then "The database has been reset"
-          when "seed" then "The database has been seeded"
-          when true then "Migrations have been applied successfully"
-          else "There was an error running migrations"
+        when 'reset' then 'The database has been reset'
+        when 'seed' then 'The database has been seeded'
+        when true then 'Migrations have been applied successfully'
+        else 'There was an error running migrations'
         end
       end
 
