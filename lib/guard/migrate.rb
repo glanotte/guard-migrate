@@ -12,7 +12,7 @@ module Guard
       @bundler = true unless options[:bundler] == false
       @cmd = options[:cmd].to_s unless options[:cmd].to_s.empty?
       @reset = true if options[:reset] == true
-      @test_clone = options[:test_clone]
+      @test_prepare = options[:test_prepare]
       @run_on_start = true if options[:run_on_start] == true
       @rails_env = options[:rails_env]
       @seed = options[:seed]
@@ -30,8 +30,8 @@ module Guard
       !!@cmd
     end
 
-    def test_clone?
-      !!@test_clone
+    def test_prepare?
+      !!@test_prepare
     end
 
     def reset?
@@ -109,7 +109,7 @@ module Guard
         rake_command,
         migrate_string(version),
         seed_string,
-        clone_string,
+        prepare_string,
         rails_env_string
       ].compact.join(' ')
     end
@@ -120,7 +120,7 @@ module Guard
         custom_command,
         rake_command,
         seed_string,
-        clone_string,
+        prepare_string,
         rails_env_string
       ].compact.join(' ')
     end
@@ -158,9 +158,9 @@ module Guard
       "RAILS_ENV=#{rails_env}" if rails_env
     end
 
-    def clone_string
-      return if !test_clone? || custom_command.to_s.match(/db:test:clone/)
-      'db:test:clone'
+    def prepare_string
+      return if !test_prepare? || custom_command.to_s.match(/db:test:prepare/)
+      'db:test:prepare'
     end
 
     def seed_string
