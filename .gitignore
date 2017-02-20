@@ -6,4 +6,6 @@ doc
 pkg
 *.swp
 .rvmrc
+.ruby-version
+.ruby-gemset
 Gemfile.lock
