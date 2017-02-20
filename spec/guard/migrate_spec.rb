@@ -113,12 +113,12 @@ RSpec.describe Guard::Migrate do
             end
           end
 
-          context 'with duplication of db:test:clone' do
-            let(:options) { { cmd: 'custom command rake db:test:clone' } }
+          context 'with duplication of db:test:prepare' do
+            let(:options) { { cmd: 'custom command rake db:test:prepare' } }
 
             context 'rake_string' do
-              it "should contains 'db:test:clone' once" do
-                expect(subject.rake_string.scan('db:test:clone').size).to eq(1)
+              it "should contains 'db:test:prepare' once" do
+                expect(subject.rake_string.scan('db:test:prepare').size).to eq(1)
               end
             end
           end
@@ -126,10 +126,10 @@ RSpec.describe Guard::Migrate do
       end
     end
 
-    context 'test clone' do
+    context 'test prepare' do
       context 'with no options passed' do
-        describe '#test_clone?' do
-          subject { super().test_clone? }
+        describe '#test_prepare?' do
+          subject { super().test_prepare? }
           it { is_expected.to be_falsey }
         end
 
@@ -140,15 +140,15 @@ RSpec.describe Guard::Migrate do
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { is_expected.not_to match(/db:test:clone/) }
+          it { is_expected.not_to match(/db:test:prepare/) }
         end
       end
 
       context 'when passed false' do
-        let(:options) { { test_clone: false } }
+        let(:options) { { test_prepare: false } }
 
-        describe '#test_clone?' do
-          subject { super().test_clone? }
+        describe '#test_prepare?' do
+          subject { super().test_prepare? }
           it { is_expected.to be_falsey }
         end
 
@@ -159,15 +159,15 @@ RSpec.describe Guard::Migrate do
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { is_expected.not_to match(/db:test:clone/) }
+          it { is_expected.not_to match(/db:test:prepare/) }
         end
       end
 
       context 'when passed true' do
-        let(:options) { { test_clone: true } }
+        let(:options) { { test_prepare: true } }
 
-        describe '#test_clone?' do
-          subject { super().test_clone? }
+        describe '#test_prepare?' do
+          subject { super().test_prepare? }
           it { is_expected.to be_truthy }
         end
 
@@ -178,7 +178,7 @@ RSpec.describe Guard::Migrate do
 
         describe '#rake_string' do
           subject { super().rake_string }
-          it { is_expected.to match(/db:test:clone/) }
+          it { is_expected.to match(/db:test:prepare/) }
         end
       end
     end
@@ -322,21 +322,21 @@ RSpec.describe Guard::Migrate do
         end
       end
 
-      context 'when seed is set to true and clone is set to true' do
-        let(:options) { { seed: true, test_clone: true } }
-        it 'runs the seed option before the clone option' do
-          expect(subject.rake_string).to match(/db:seed.*db:test:clone/)
+      context 'when seed is set to true and prepare is set to true' do
+        let(:options) { { seed: true, test_prepare: true } }
+        it 'runs the seed option before the prepare option' do
+          expect(subject.rake_string).to match(/db:seed.*db:test:prepare/)
         end
       end
     end
 
     context 'when the seeds file is passed as the paths' do
       let(:paths) { ['db/seeds.rb'] }
-      let(:options) { { seed: true, test_clone: true } }
+      let(:options) { { seed: true, test_prepare: true } }
 
       describe '#seed_only_string' do
         subject { super().seed_only_string }
-        it { is_expected.to match(/db:seed db:test:clone/) }
+        it { is_expected.to match(/db:seed db:test:prepare/) }
       end
 
       it 'runs the rake command with seed only' do
@@ -375,7 +375,7 @@ RSpec.describe Guard::Migrate do
 
   context 'run on change when set to reset should only run migrations one time' do
     let(:paths) { [create_valid_up_and_down_migration('1234_i_like_cheese').path, create_valid_change_migration('1235_i_like_cheese').path] }
-    let(:options) { { reset: true, test_clone: true } }
+    let(:options) { { reset: true, test_prepare: true } }
     it 'should run the rake command' do
       expect(subject).to receive(:system).with(subject.rake_string('1234'))
       allow(Guard::Compat::UI).to receive(:info)
